@@ -1,0 +1,74 @@
+{
+  "name": "pivotal-tracker-slack-bot",
+  "version": "1.1.8",
+  "description": "Slack bot for Pivotal Tracker integration",
+  "main": "index.js",
+  "engines": {
+    "node": "~10.14.0",
+    "npm": "~6.4.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "npm run clean && npm run build",
+    "watch": "tsc -w",
+    "lint": "npm run lint:tsc && npm run lint:tslint",
+    "lint:tsc": "tsc -p tsconfig.json",
+    "lint:tslint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint:prettier": "prettier --write \"{src,test}/**/*.ts*\"",
+    "start": "node src/main",
+    "start:dev": "concurrently --kill-others \"tsc -w\" \"set DEBUG=* && nodemon src/main.js\"",
+    "start:clean": "npm run build:clean && npm run start",
+    "commit": "commit-prompt",
+    "precommit": "lint-staged && npm run lint",
+    "test": "jest --detectOpenHandles",
+    "test:unit": "jest --detectOpenHandles --testPathPattern \"src/.+spec.tsx?$\"",
+    "test:e2e": "jest --detectOpenHandles --testPathPattern \"__tests__/.+.tsx?\"",
+    "test:ci": "jest --detectOpenHandles --coverage",
+    "clean": "rimraf '{src,__tests__}/**/*.js*'",
+    "release": "./extra/deployment/release.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trucknet-io/pivotal-tracker-slack-bot.git"
+  },
+  "keywords": [
+    "pivotal",
+    "tracker",
+    "slack",
+    "bot",
+    "trucknet",
+    "typescript",
+    "boilerplate"
+  ],
+  "author": "goooseman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trucknet-io/pivotal-tracker-slack-bot/issues"
+  },
+  "homepage": "https://github.com/trucknet-io/pivotal-tracker-slack-bot#readme",
+  "devDependencies": {
+    "@types/debug": "0.0.31",
+    "@types/dotenv": "^6.1.0",
+    "@types/jest": "^23.3.2",
+    "@types/node": "~10.12.0",
+    "concurrently": "^4.1.0",
+    "debug": "^4.1.1",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.9",
+    "prettier-config-trucknet-io": "^1.1.0",
+    "rimraf": "^2.6.2",
+    "trucknet-commit": "^1.3.8",
+    "ts-jest": "^23.10.3",
+    "tslint": "^5.11.0",
+    "tslint-config-trucknet-io": "^1.0.1",
+    "typescript": "^3.1.1"
+  },
+  "_moduleAliases": {
+    "@src": "src"
+  },
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "dotenv": "^6.2.0",
+    "module-alias": "^2.1.0"
+  }
+}
