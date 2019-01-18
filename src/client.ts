@@ -1,63 +1,63 @@
 import { RTMClient, WebClient } from "@slack/client";
+import { PivotalStory, SlackEvent } from "@src/types";
+import { convertStoryToAttachment, extractPivotalIds } from "@src/utils/message";
+import axios, { AxiosInstance } from "axios";
 import debug from "debug";
 
 const log = debug("pivotal:client");
 
 export class Client {
-  private readonly token: string;
+  private readonly slackToken: string;
+  private readonly pivotalToken: string;
   private readonly rtm: RTMClient;
   private readonly web: WebClient;
+  private readonly axios: AxiosInstance;
 
   constructor() {
-    this.token = process.env.SLACK_API_TOKEN || "";
-    if (!this.token) {
-      log("You must specify a token to use this example");
+    this.slackToken = process.env.SLACK_API_TOKEN || "";
+    this.pivotalToken = process.env.PIVOTAL_API_TOKEN || "";
+    if (!this.slackToken || !this.pivotalToken) {
+      log("You must specify Slack and Pivotal tokens to use this bot");
       process.exit(1);
     }
 
-    this.rtm = new RTMClient(this.token);
-    this.web = new WebClient(this.token);
+    this.rtm = new RTMClient(this.slackToken);
+    this.web = new WebClient(this.slackToken);
+    this.axios = axios.create({
+      headers: {
+        "X-TrackerToken": this.pivotalToken
+      }
+    });
   }
 
   public start() {
     this.rtm.start();
+    this.rtm.on("message", this.handleMessageEvent);
+  }
 
-    this.rtm.on("message", (event) => {
-      log(`Message`, JSON.stringify(event, undefined, 2));
-      if (event.subtype !== "bot_message") {
-        this.web.chat.unfurl({
-          channel: event.channel,
-          ts: event.ts,
-          unfurls: {
-            lol: {
-              "fallback": "Required plain-text summary of the attachment.",
-              "color": "#2eb886",
-              "pretext": "Optional text that appears above the attachment block",
-              "author_name": "Bobby Tables",
-              // tslint:disable-next-line
-              "author_link": "http://flickr.com/bobby/",
-              // tslint:disable-next-line
-              "author_icon": "http://flickr.com/icons/bobby.jpg",
-              "title": "Slack API Documentation",
-              "title_link": "https://api.slack.com/",
-              "text": "Optional text that appears within the attachment",
-              "fields": [
-                {
-                  "title": "Priority",
-                  "value": "High",
-                  "short": false
-                }
-              ],
-              // tslint:disable-next-line
-              "image_url": "http://my-website.com/path/to/image.jpg",
-              // tslint:disable-next-line
-              "thumb_url": "http://example.com/path/to/thumb.png",
-              "footer": "Slack API",
-              "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png",
-            }
-          }
-        });
-      }
+  private handleMessageEvent = async (event: SlackEvent) => {
+    if (event.subtype === "bot_message") { return; }
+    const ids = extractPivotalIds(event);
+
+    if (!ids.length) { return; }
+
+    const stories = await this.fetchPivotalStories(ids);
+    await this.postToPivotal(event, stories);
+  };
+
+  private async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
+    const requests = ids.map(
+      id => this.axios.get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
+    );
+    const responses = await Promise.all(requests);
+    return responses.map(res => res.data);
+  }
+
+  private async postToPivotal(event: SlackEvent, stories: PivotalStory[]) {
+    this.web.chat.postMessage({
+      channel: event.channel,
+      text: "",
+      attachments: stories.map(convertStoryToAttachment)
     });
   }
 }
