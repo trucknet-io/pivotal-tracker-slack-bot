@@ -3,7 +3,7 @@ import { DESCRIPTION_LENGTH, PIVOTAL_STORY_TYPE_CONFIG } from "@src/constants/pi
 import { PivotalStory, PivotalStoryTypeConfig, SlackEvent } from "@src/types";
 
 export function extractPivotalIds(message: SlackEvent): string[] {
-  const ids = message.text.match(/\#\d{9}/gim);
+  const ids = message.text && message.text.match(/\#\d{9}/gim);
   if (!ids) { return []; }
   return ids.map(id => id.replace("#", ""));
 }

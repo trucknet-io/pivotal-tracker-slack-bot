@@ -41,18 +41,30 @@ export class Client {
 
     if (!ids.length) { return; }
 
-    const [response, stories] = await Promise.all([
+    const [loadingMsg, stories] = await Promise.all([
       this.rtm.sendMessage(`Loading ${ids.length > 1 ? "stories" : "story"}...`, event.channel),
-    this.fetchPivotalStories(ids)]);
-    await this.postStoriesToSlack({ channel: event.channel, ts: response.ts }, stories);
+      this.fetchPivotalStories(ids)
+    ]);
+
+    if (!stories.length) {
+      this.web.chat.delete({
+        channel: event.channel,
+        ts: loadingMsg.ts
+      });
+      return;
+    }
+
+    await this.postStoriesToSlack({ channel: event.channel, ts: loadingMsg.ts }, stories);
   };
 
   private async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
     const requests = ids.map(
       id => this.axios.get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
+        .then(res => res.data)
+        .catch(() => undefined)
     );
-    const responses = await Promise.all(requests);
-    return responses.map(res => res.data);
+    const stories = await Promise.all(requests);
+    return stories.filter(Boolean) as PivotalStory[];
   }
 
   private async postStoriesToSlack(options: { channel: string; ts: string }, stories: PivotalStory[]) {
