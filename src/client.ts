@@ -41,8 +41,10 @@ export class Client {
 
     if (!ids.length) { return; }
 
-    const stories = await this.fetchPivotalStories(ids);
-    await this.postToPivotal(event, stories);
+    const [response, stories] = await Promise.all([
+      this.rtm.sendMessage(`Loading ${ids.length > 1 ? "stories" : "story"}...`, event.channel),
+    this.fetchPivotalStories(ids)]);
+    await this.postStoriesToSlack({ channel: event.channel, ts: response.ts }, stories);
   };
 
   private async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
@@ -53,11 +55,11 @@ export class Client {
     return responses.map(res => res.data);
   }
 
-  private async postToPivotal(event: SlackEvent, stories: PivotalStory[]) {
-    this.web.chat.postMessage({
-      channel: event.channel,
+  private async postStoriesToSlack(options: { channel: string; ts: string }, stories: PivotalStory[]) {
+    return this.web.chat.update({
+      attachments: stories.map(convertStoryToAttachment),
       text: "",
-      attachments: stories.map(convertStoryToAttachment)
+      ...options
     });
   }
 }
