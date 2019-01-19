@@ -25,31 +25,37 @@ export class Client {
     this.web = new WebClient(this.slackToken);
     this.axios = axios.create({
       headers: {
-        "X-TrackerToken": this.pivotalToken
-      }
+        "X-TrackerToken": this.pivotalToken,
+      },
     });
   }
 
   public start() {
-    this.rtm.start();
+    this.rtm.start().catch((err) => {
+      log(`Could not start RTMClient`, err);
+    });
     this.rtm.on("message", this.handleMessageEvent);
   }
 
   private handleMessageEvent = async (event: SlackEvent) => {
-    if (event.subtype === "bot_message") { return; }
+    if (event.subtype === "bot_message") {
+      return;
+    }
     const ids = extractPivotalIds(event);
 
-    if (!ids.length) { return; }
+    if (!ids.length) {
+      return;
+    }
 
     const [loadingMsg, stories] = await Promise.all([
       this.rtm.sendMessage(`Loading ${ids.length > 1 ? "stories" : "story"}...`, event.channel),
-      this.fetchPivotalStories(ids)
+      this.fetchPivotalStories(ids),
     ]);
 
     if (!stories.length) {
-      this.web.chat.delete({
+      await this.web.chat.delete({
         channel: event.channel,
-        ts: loadingMsg.ts
+        ts: loadingMsg.ts,
       });
       return;
     }
@@ -58,10 +64,11 @@ export class Client {
   };
 
   private async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
-    const requests = ids.map(
-      id => this.axios.get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
-        .then(res => res.data)
-        .catch(() => undefined)
+    const requests = ids.map((id) =>
+      this.axios
+        .get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
+        .then((res) => res.data)
+        .catch(() => undefined),
     );
     const stories = await Promise.all(requests);
     return stories.filter(Boolean) as PivotalStory[];
@@ -71,7 +78,7 @@ export class Client {
     return this.web.chat.update({
       attachments: stories.map(convertStoryToAttachment),
       text: "",
-      ...options
+      ...options,
     });
   }
 }

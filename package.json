@@ -15,7 +15,7 @@
     "lint:tsc": "tsc -p tsconfig.json",
     "lint:tslint": "tslint -c tslint.json -p tsconfig.json --fix",
     "lint:prettier": "prettier --write \"{src,test}/**/*.ts*\"",
-    "start": "node src/main",
+    "start": "node src/main.js",
     "start:dev": "concurrently --kill-others \"tsc -w\" \"set DEBUG=* && nodemon src/main.js\"",
     "start:clean": "npm run build:clean && npm run start",
     "commit": "commit-prompt",
