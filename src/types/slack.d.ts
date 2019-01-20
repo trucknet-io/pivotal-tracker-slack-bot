@@ -18,11 +18,11 @@ export type SlackAttachment = MessageAttachment;
 
 export type SlackEvent = {
   type: SlackEventType;
-  subtype: SlackEventSubtype;
+  subtype?: SlackEventSubtype;
   hidden?: boolean;
   channel: SlackChannelId;
   user: SlackUserId;
-  text: string;
+  text?: string;
   ts: SlackTimeStamp;
   deleted_ts?: SlackTimeStamp;
   event_ts?: SlackTimeStamp;
@@ -33,5 +33,5 @@ export type SlackEvent = {
   is_starred?: boolean;
   pinned_to?: SlackChannelId[];
   reactions?: SlackReaction[];
-  attachments: SlackAttachment[];
+  attachments?: SlackAttachment[];
 };

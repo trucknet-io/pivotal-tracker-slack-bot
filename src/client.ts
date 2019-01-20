@@ -1,4 +1,5 @@
 import { RTMClient, WebClient } from "@slack/client";
+import { SLACK_EVENT_SUBTYPE, SLACK_EVENT_TYPE } from "@src/constants/slack";
 import { PivotalStory, SlackEvent } from "@src/types";
 import { convertStoryToAttachment, extractPivotalIds } from "@src/utils/message";
 import axios, { AxiosInstance } from "axios";
@@ -34,11 +35,11 @@ export class Client {
     this.rtm.start().catch((err) => {
       log(`Could not start RTMClient`, err);
     });
-    this.rtm.on("message", this.handleMessageEvent);
+    this.rtm.on(SLACK_EVENT_TYPE.message, this.handleMessageEvent);
   }
 
   private handleMessageEvent = async (event: SlackEvent) => {
-    if (event.subtype === "bot_message") {
+    if (event.subtype === SLACK_EVENT_SUBTYPE.bot_message) {
       return;
     }
     const ids = extractPivotalIds(event);
@@ -47,10 +48,14 @@ export class Client {
       return;
     }
 
+    log(`Extracted ids: `, ids, `\nFrom message: `, event);
+
     const [loadingMsg, stories] = await Promise.all([
       this.rtm.sendMessage(`Loading ${ids.length > 1 ? "stories" : "story"}...`, event.channel),
       this.fetchPivotalStories(ids),
     ]);
+
+    log(`Got stories: `, stories);
 
     if (!stories.length) {
       await this.web.chat.delete({
