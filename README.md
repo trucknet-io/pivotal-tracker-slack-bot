@@ -35,8 +35,11 @@ Your `.env` file should look something like this:
 ## Start
 
 `npm run build` to build js  
-`npm start` to start  
+`npm start` to run the bot  
 `npm run start:dev` to watch for file changes and restart bot instance  
+
+*Note: after the bot is installed and running you need to invite him as a 
+member to your channel in Slack so that he can post new messages.*
 
 ## Tests
 
@@ -51,4 +54,11 @@ Integration tests should be in **tests**.
  edit package.json (and lock) to update the version, commit, finish 
  the release and push including all branches and tags.
  
- 
+## Deployment
+
+You can use project's `Dockerfile` to build a **Docker** image.  
+There are helper npm scripts available in the project:  
+`npm run docker` - builds Docker image named *pivotal* and runs it inside 
+a container also named *pivotal*  
+`npm run docker:clean` - stops and removes *pivotal* Docker container, then 
+removes *pivotal* Docker image

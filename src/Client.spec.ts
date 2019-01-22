@@ -73,7 +73,7 @@ describe("Client", () => {
     expect(client.beforeStoriesPosted).not.toBeCalled();
   });
 
-  test("deletes bot's message if no stories fetched", async () => {
+  test("posts fetched stories as Slack message with attachments", async () => {
     const client = new ClientMock();
     const [i1] = BAD_IDS;
     const [v1, v2] = GOOD_IDS;
