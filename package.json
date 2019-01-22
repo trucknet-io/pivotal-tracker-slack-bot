@@ -54,6 +54,7 @@
     "concurrently": "^4.1.0",
     "debug": "^4.1.1",
     "jest": "^23.6.0",
+    "jest-mock-axios": "^2.1.11",
     "nodemon": "^1.18.9",
     "prettier-config-trucknet-io": "^1.1.0",
     "rimraf": "^2.6.2",
