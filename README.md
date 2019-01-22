@@ -59,6 +59,6 @@ Integration tests should be in **tests**.
 You can use project's `Dockerfile` to build a **Docker** image.  
 There are helper npm scripts available in the project:  
 `npm run docker` - builds Docker image named *pivotal* and runs it inside 
-a container also named *pivotal*  
+a container also named *pivotal*.  
 `npm run docker:clean` - stops and removes *pivotal* Docker container, then 
-removes *pivotal* Docker image
+removes *pivotal* Docker image.
