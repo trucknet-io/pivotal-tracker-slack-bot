@@ -1,6 +1,6 @@
 {
   "name": "pivotal-tracker-slack-bot",
-  "version": "1.1.8",
+  "version": "1.0.0",
   "description": "Slack bot for Pivotal Tracker integration",
   "main": "index.js",
   "engines": {
@@ -27,7 +27,7 @@
     "test": "jest --detectOpenHandles",
     "test:unit": "jest --detectOpenHandles --testPathPattern \"src/.+spec.tsx?$\"",
     "test:e2e": "jest --detectOpenHandles --testPathPattern \"__tests__/.+.tsx?\"",
-    "test:ci": "jest --detectOpenHandles --coverage",
+    "test:ci": "jest --detectOpenHandles --coverage && cat ./coverage/lcov.info | coveralls",
     "clean": "rimraf '{src,__tests__}/**/*.js*'",
     "release": "./extra/deployment/release.sh"
   },
@@ -56,6 +56,7 @@
     "@types/jest": "^23.3.2",
     "@types/node": "~10.12.0",
     "concurrently": "^4.1.0",
+    "coveralls": "^3.0.2",
     "debug": "^4.1.1",
     "jest": "^23.6.0",
     "jest-mock-axios": "^2.1.11",

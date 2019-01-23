@@ -5,3 +5,4 @@ src/**/*.js.map
 coverage
 .idea
 .env
+kubernetes.yaml
