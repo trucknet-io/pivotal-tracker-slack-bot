@@ -1,22 +1,22 @@
 import { PIVOTAL_STORY_TYPE } from "@src/constants/pivotal";
 import { PivotalStoryType } from "@src/types";
-import { mockPivotalStory } from "@src/utils/tests/pivotal";
-import { mockSlackEvent } from "@src/utils/tests/slack";
+import { getFakePivotalStory } from "@src/utils/tests/pivotal";
+import { getFakeSlackEvent } from "@src/utils/tests/slack";
 import { convertStoryToAttachment, extractPivotalIds } from "./message";
 
 describe("extractPivotalIds", () => {
   test("extracts array of Pivotal story IDs from SlackEvent", () => {
-    const message = mockSlackEvent();
+    const message = getFakeSlackEvent();
     const ids = extractPivotalIds(message);
     expect(ids).toEqual(["123456789", "234567890"]);
   });
 
   test("returns empty array if no IDs found", () => {
-    const message1 = mockSlackEvent({ text: "Hey!" });
+    const message1 = getFakeSlackEvent({ text: "Hey!" });
     const ids1 = extractPivotalIds(message1);
     expect(ids1).toEqual([]);
 
-    const message2 = mockSlackEvent({ text: undefined });
+    const message2 = getFakeSlackEvent({ text: undefined });
     const ids2 = extractPivotalIds(message2);
     expect(ids2).toEqual([]);
   });
@@ -24,7 +24,7 @@ describe("extractPivotalIds", () => {
 
 describe("convertStoryToAttachment", () => {
   test("converts Pivotal feature to Slack's MessageAttachment", () => {
-    const story = mockPivotalStory();
+    const story = getFakePivotalStory();
     const attachment = convertStoryToAttachment(story);
     expect(attachment).toEqual({
       color: "#e25d05",
@@ -37,7 +37,7 @@ describe("convertStoryToAttachment", () => {
   });
 
   test("converts Pivotal bug to Slack's MessageAttachment", () => {
-    const story = mockPivotalStory({
+    const story = getFakePivotalStory({
       estimate: undefined,
       story_type: PIVOTAL_STORY_TYPE.bug as PivotalStoryType,
     });
@@ -53,7 +53,7 @@ describe("convertStoryToAttachment", () => {
   });
 
   test(`cuts description that is longer than 50 chars`, () => {
-    const story = mockPivotalStory({
+    const story = getFakePivotalStory({
       description: "0123456789\n123456789\r123456789\n\r2345678901234567890123",
       estimate: undefined,
       story_type: PIVOTAL_STORY_TYPE.chore as PivotalStoryType,

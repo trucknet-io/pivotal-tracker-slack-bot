@@ -1,5 +1,5 @@
 import { SlackEvent } from "@src/types";
-import { BOT_MESSAGE_TS, mockSlackEvent } from "@src/utils/tests/slack";
+import { BOT_MESSAGE_TS, getFakeSlackEvent } from "@src/utils/tests/slack";
 
 export class RTMClient {
   public token: string;
@@ -7,7 +7,7 @@ export class RTMClient {
 
   constructor(token: string) {
     this.token = token;
-    this.mockEvent = mockSlackEvent();
+    this.mockEvent = getFakeSlackEvent();
   }
 
   public start() {

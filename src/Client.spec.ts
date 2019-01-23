@@ -4,8 +4,8 @@ import { PivotalStoryType, SlackEvent, SlackEventSubtype } from "@src/types";
 import { timeout } from "@src/utils/helpers";
 import { convertStoryToAttachment } from "@src/utils/message";
 import { IFakeRtmClient } from "@src/utils/tests/helpers";
-import { BAD_IDS, GOOD_IDS, mockPivotalStory } from "@src/utils/tests/pivotal";
-import { BOT_MESSAGE_TS, mockSlackEvent } from "@src/utils/tests/slack";
+import { BAD_IDS, getFakePivotalStory, GOOD_IDS } from "@src/utils/tests/pivotal";
+import { BOT_MESSAGE_TS, getFakeSlackEvent } from "@src/utils/tests/slack";
 import jestMockAxios from "jest-mock-axios";
 import Client from "./Client";
 
@@ -32,7 +32,7 @@ class ClientMock extends Client {
 
   // Use this method to mock Slack message event
   public start(event?: Partial<SlackEvent>) {
-    const e = mockSlackEvent(event);
+    const e = getFakeSlackEvent(event);
     (this.rtm as IFakeRtmClient).mockEvent = e;
     super.start();
     return e;
@@ -79,8 +79,8 @@ describe("Client", () => {
     const [v1, v2] = GOOD_IDS;
     const message = client.start({ text: `Message with good and bad IDs: #${v1}, #${i1}, #${v2}` });
 
-    const story1 = mockPivotalStory({ id: v1 });
-    const story2 = mockPivotalStory({
+    const story1 = getFakePivotalStory({ id: v1 });
+    const story2 = getFakePivotalStory({
       id: v2,
       estimate: undefined,
       story_type: PIVOTAL_STORY_TYPE.bug as PivotalStoryType,
