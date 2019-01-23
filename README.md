@@ -15,17 +15,30 @@ them as a nice message in Slack.
 
 ![](pivotal-slack-bot.gif)
 
+## Pre installation
+
+1. Get your Slack bot token:
+
+- [Create your Slack app and add bot into it](https://api.slack.com/bot-users).
+- Install your app to your workspace.
+- Got to the _Features -> OAuth & Permissions_ tab and copy **Bot User OAuth
+  Access Token**. This your SLACK_API_TOKEN.
+
+2. Get your Pivotal Tracker token:
+
+- Go to your [profile](https://www.pivotaltracker.com/profile)
+- Get your API token on the bottom of the page. This is your PIVOTAL_API_TOKEN.
+
 ## Installation
 
+### With Docker image
+
+Just run our [trucknet/pivotal-tracker-slack-bot:latest](https://cloud.docker.com/u/trucknet/repository/docker/trucknet/pivotal-tracker-slack-bot) docker image providing `SLACK_API_TOKEN` and `PIVOTAL_API_TOKEN` env variables.
+
+### From source code
+
 1. Create `.env` file and put it in project's root folder.
-1. [Create your Slack app and add bot into it](https://api.slack.com/bot-users).
-1. Install your app to your workspace.
-1. Got to the _Features -> OAuth & Permissions_ tab and copy **Bot User OAuth
-   Access Token**. Paste it as
-   `SLACK_API_TOKEN=your-slack-token-goes-here` in the `.env` file.
-1. Go to your [Pivotal profile](https://www.pivotaltracker.com/profile),
-   find _API TOKEN_ section, copy your **API token** and paste it as
-   `PIVOTAL_API_TOKEN=your-pivotal-token-goes-here`.
+1. Paste your environment variables to this file.
    Your `.env` file should look something like this:
    `SLACK_API_TOKEN=xoxb-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx PIVOTAL_API_TOKEN=aaaaaaaaaabbbbbbbbbbffffffffff00`
 1. Run `npm install` and that's it.
