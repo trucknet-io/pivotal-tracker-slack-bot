@@ -1,7 +1,7 @@
 import { SLACK_EVENT_TYPE } from "@src/constants/slack";
 import { SlackEvent, SlackEventType } from "@src/types";
 
-export function mockSlackEvent(override?: Partial<SlackEvent>): SlackEvent {
+export function getFakeSlackEvent(override?: Partial<SlackEvent>): SlackEvent {
   return {
     channel: "CFEPT8SUU",
     text: "Take a look these stories: #123456789, #234567890",

@@ -4,8 +4,8 @@ import { PivotalStoryType, SlackEvent, SlackEventSubtype } from "@src/types";
 import { timeout } from "@src/utils/helpers";
 import { convertStoryToAttachment } from "@src/utils/message";
 import { IFakeRtmClient } from "@src/utils/tests/helpers";
-import { BAD_IDS, GOOD_IDS, mockPivotalStory } from "@src/utils/tests/pivotal";
-import { BOT_MESSAGE_TS, mockSlackEvent } from "@src/utils/tests/slack";
+import { BAD_IDS, getFakePivotalStory, GOOD_IDS } from "@src/utils/tests/pivotal";
+import { BOT_MESSAGE_TS, getFakeSlackEvent } from "@src/utils/tests/slack";
 import jestMockAxios from "jest-mock-axios";
 import Client from "./Client";
 
@@ -26,13 +26,13 @@ class ClientMock extends Client {
       onBotMessage: jest.fn(),
       onNoIdsFound: jest.fn(),
       onNoStoriesFound: jest.fn(),
-      beforeStoriesPosted: jest.fn(),
+      onBeforeStoriesPosted: jest.fn(),
     });
   }
 
   // Use this method to mock Slack message event
   public start(event?: Partial<SlackEvent>) {
-    const e = mockSlackEvent(event);
+    const e = getFakeSlackEvent(event);
     (this.rtm as IFakeRtmClient).mockEvent = e;
     super.start();
     return e;
@@ -45,7 +45,7 @@ describe("Client", () => {
     client.start({ subtype: SLACK_EVENT_SUBTYPE.bot_message as SlackEventSubtype });
 
     expect(client.onBotMessage).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("skips messages without ids", () => {
@@ -54,7 +54,7 @@ describe("Client", () => {
 
     expect(client.onBotMessage).not.toBeCalled();
     expect(client.onNoIdsFound).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("deletes bot's message if no stories fetched", async () => {
@@ -70,7 +70,7 @@ describe("Client", () => {
 
     expect(client.onNoIdsFound).not.toBeCalled();
     expect(client.onNoStoriesFound).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("posts fetched stories as Slack message with attachments", async () => {
@@ -79,8 +79,8 @@ describe("Client", () => {
     const [v1, v2] = GOOD_IDS;
     const message = client.start({ text: `Message with good and bad IDs: #${v1}, #${i1}, #${v2}` });
 
-    const story1 = mockPivotalStory({ id: v1 });
-    const story2 = mockPivotalStory({
+    const story1 = getFakePivotalStory({ id: v1 });
+    const story2 = getFakePivotalStory({
       id: v2,
       estimate: undefined,
       story_type: PIVOTAL_STORY_TYPE.bug as PivotalStoryType,
@@ -94,7 +94,7 @@ describe("Client", () => {
 
     expect(client.onNoIdsFound).not.toBeCalled();
     expect(client.onNoStoriesFound).not.toBeCalled();
-    expect(client.beforeStoriesPosted).toBeCalledWith({
+    expect(client.onBeforeStoriesPosted).toBeCalledWith({
       attachments: [story1, story2].map(convertStoryToAttachment),
       text: "",
       channel: message.channel,
