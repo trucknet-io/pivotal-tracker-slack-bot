@@ -2,7 +2,7 @@ export const PIVOTAL_STORY_TYPE = {
   bug: "bug",
   chore: "chore",
   feature: "feature",
-  release: "release"
+  release: "release",
 };
 
 export const PIVOTAL_STORY_STATE = {
@@ -13,7 +13,7 @@ export const PIVOTAL_STORY_STATE = {
   rejected: "rejected",
   started: "started",
   unscheduled: "unscheduled",
-  unstarted: "unstarted"
+  unstarted: "unstarted",
 };
 
 export enum PIVOTAL_ENTITY_KIND {
@@ -25,19 +25,19 @@ export enum PIVOTAL_ENTITY_KIND {
 export const PIVOTAL_STORY_TYPE_CONFIG = {
   [PIVOTAL_STORY_TYPE.bug]: {
     emoji: ":beetle:",
-    title: "Bug"
+    title: "Bug",
   },
   [PIVOTAL_STORY_TYPE.chore]: {
     emoji: ":gear:",
-    title: "Chore"
+    title: "Chore",
   },
   [PIVOTAL_STORY_TYPE.feature]: {
     emoji: ":star:",
-    title: "Feature"
+    title: "Feature",
   },
   [PIVOTAL_STORY_TYPE.release]: {
     emoji: ":checkered_flag:",
-    title: "Release"
+    title: "Release",
   },
 };
 
