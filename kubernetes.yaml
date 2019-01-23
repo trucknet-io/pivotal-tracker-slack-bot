@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pivotal-tracker-slack-bot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pivotal-tracker-slack-bot
+  template:
+    metadata:
+      labels:
+        app: pivotal-tracker-slack-bot
+    spec:
+      containers:
+        - name: pivotal-tracker-slack-bot-container
+          image: trucknet/pivotal-tracker-slack-bot:latest
+          env:
+            - name: SLACK_API_TOKEN
+              value: XXX
+            - name: PIVOTAL_API_TOKEN
+              value: XXX
