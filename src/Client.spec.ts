@@ -26,7 +26,7 @@ class ClientMock extends Client {
       onBotMessage: jest.fn(),
       onNoIdsFound: jest.fn(),
       onNoStoriesFound: jest.fn(),
-      beforeStoriesPosted: jest.fn(),
+      onBeforeStoriesPosted: jest.fn(),
     });
   }
 
@@ -45,7 +45,7 @@ describe("Client", () => {
     client.start({ subtype: SLACK_EVENT_SUBTYPE.bot_message as SlackEventSubtype });
 
     expect(client.onBotMessage).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("skips messages without ids", () => {
@@ -54,7 +54,7 @@ describe("Client", () => {
 
     expect(client.onBotMessage).not.toBeCalled();
     expect(client.onNoIdsFound).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("deletes bot's message if no stories fetched", async () => {
@@ -70,7 +70,7 @@ describe("Client", () => {
 
     expect(client.onNoIdsFound).not.toBeCalled();
     expect(client.onNoStoriesFound).toBeCalledTimes(1);
-    expect(client.beforeStoriesPosted).not.toBeCalled();
+    expect(client.onBeforeStoriesPosted).not.toBeCalled();
   });
 
   test("posts fetched stories as Slack message with attachments", async () => {
@@ -94,7 +94,7 @@ describe("Client", () => {
 
     expect(client.onNoIdsFound).not.toBeCalled();
     expect(client.onNoStoriesFound).not.toBeCalled();
-    expect(client.beforeStoriesPosted).toBeCalledWith({
+    expect(client.onBeforeStoriesPosted).toBeCalledWith({
       attachments: [story1, story2].map(convertStoryToAttachment),
       text: "",
       channel: message.channel,
