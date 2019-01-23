@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/trucknet-io/pivotal-tracker-slack-bot.svg?branch=master)](https://travis-ci.org/trucknet-io/pivotal-tracker-slack-bot)
 [![Coverage Status](https://coveralls.io/repos/github/trucknet-io/pivotal-tracker-slack-bot/badge.svg)](https://coveralls.io/github/trucknet-io/pivotal-tracker-slack-bot)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 > [Slack](https://www.slack.com) bot for integration with
 > [Pivotal Tracker](https://www.pivotaltracker.com).
