@@ -8,7 +8,5 @@ RUN npm install
 COPY . .
 RUN npm run build:clean
 
-COPY *.js ./
-
 # EXPOSE 8080
 CMD [ "npm", "start" ]
