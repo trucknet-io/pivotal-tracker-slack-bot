@@ -27,7 +27,7 @@
     "test": "jest --detectOpenHandles",
     "test:unit": "jest --detectOpenHandles --testPathPattern \"src/.+spec.tsx?$\"",
     "test:e2e": "jest --detectOpenHandles --testPathPattern \"__tests__/.+.tsx?\"",
-    "test:ci": "jest --detectOpenHandles --coverage | coveralls",
+    "test:ci": "jest --detectOpenHandles --coverage && cat ./coverage/lcov.info | coveralls",
     "clean": "rimraf '{src,__tests__}/**/*.js*'",
     "release": "./extra/deployment/release.sh"
   },
