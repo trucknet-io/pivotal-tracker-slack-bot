@@ -9,4 +9,3 @@ install:
   - npm ci
 script:
   - npm run test:ci
-after_success: coveralls
