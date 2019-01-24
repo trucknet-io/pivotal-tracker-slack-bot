@@ -2,12 +2,12 @@ import { MessageAttachment } from "@slack/client";
 import { DESCRIPTION_LENGTH, PIVOTAL_STORY_TYPE_CONFIG } from "@src/constants/pivotal";
 import { PivotalStory, PivotalStoryTypeConfig, SlackEvent } from "@src/types";
 
-export function extractPivotalIds(message: SlackEvent): string[] {
+export function extractPivotalIds(message: SlackEvent): number[] {
   const ids = message.text && message.text.match(/\#\d{9}/gim);
   if (!ids) {
     return [];
   }
-  return ids.map((id) => id.replace("#", ""));
+  return Array.from(new Set(ids.map((id) => parseInt(id.replace("#", ""), 10))));
 }
 
 export function convertStoryToAttachment(story: PivotalStory): MessageAttachment {
