@@ -1,6 +1,6 @@
 import { PIVOTAL_STORY_TYPE } from "@src/constants/pivotal";
 import { PivotalStoryType } from "@src/types";
-import { getFakePivotalStory } from "@src/utils/tests/pivotal";
+import { getFakePivotalStory, GOOD_IDS } from "@src/utils/tests/pivotal";
 import { getFakeSlackEvent } from "@src/utils/tests/slack";
 import { convertStoryToAttachment, extractPivotalIds } from "./message";
 
@@ -8,7 +8,7 @@ describe("extractPivotalIds", () => {
   test("extracts array of Pivotal story IDs from SlackEvent", () => {
     const message = getFakeSlackEvent();
     const ids = extractPivotalIds(message);
-    expect(ids).toEqual(["123456789", "234567890"]);
+    expect(ids).toEqual(GOOD_IDS);
   });
 
   test("returns empty array if no IDs found", () => {
@@ -19,6 +19,15 @@ describe("extractPivotalIds", () => {
     const message2 = getFakeSlackEvent({ text: undefined });
     const ids2 = extractPivotalIds(message2);
     expect(ids2).toEqual([]);
+  });
+
+  test("returns array of unique IDs", () => {
+    const [i1, i2, i3] = GOOD_IDS;
+    const message = getFakeSlackEvent({
+      text: `Duplicates #${i1}, #${i2}, #${i1}, #${i2}, #${i3}`,
+    });
+    const ids = extractPivotalIds(message);
+    expect(ids).toEqual(GOOD_IDS);
   });
 });
 

@@ -14,8 +14,8 @@ export type ClientEnv = {
 
 export interface IClientEvents {
   onBotMessage(e?: SlackEvent): void;
-  onNoIdsFound(e?: SlackEvent, ids?: string[]): void;
-  onNoStoriesFound(e?: SlackEvent, ids?: string[]): void;
+  onNoIdsFound(e?: SlackEvent, ids?: number[]): void;
+  onNoStoriesFound(e?: SlackEvent, ids?: number[]): void;
   onBeforeStoriesPosted(update: Partial<SlackEvent>): void;
 }
 
@@ -99,7 +99,7 @@ export class Client implements IClientEvents {
     return this.postStoriesToSlack({ channel: event.channel, ts: loadingMsg.ts }, stories);
   };
 
-  protected async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
+  protected async fetchPivotalStories(ids: number[]): Promise<PivotalStory[]> {
     const requests = ids.map((id) =>
       this.axios
         .get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
