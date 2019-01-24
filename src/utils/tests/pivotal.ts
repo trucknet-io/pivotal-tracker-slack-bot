@@ -1,7 +1,7 @@
 import { PIVOTAL_ENTITY_KIND, PIVOTAL_STORY_TYPE } from "@src/constants/pivotal";
 import { PivotalStory, PivotalStoryType } from "@src/types";
 
-export function mockPivotalStory(override?: Partial<PivotalStory>): PivotalStory {
+export function getFakePivotalStory(override?: Partial<PivotalStory>): PivotalStory {
   return {
     kind: PIVOTAL_ENTITY_KIND.story,
     id: 162529758,

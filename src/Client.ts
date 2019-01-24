@@ -13,17 +13,17 @@ export type ClientEnv = {
 };
 
 export interface IClientEvents {
-  onBotMessage?(e?: SlackEvent): void;
-  onNoIdsFound?(e?: SlackEvent, ids?: string[]): void;
-  onNoStoriesFound?(e?: SlackEvent, ids?: string[]): void;
-  beforeStoriesPosted?(update: Partial<SlackEvent>): void;
+  onBotMessage(e?: SlackEvent): void;
+  onNoIdsFound(e?: SlackEvent, ids?: number[]): void;
+  onNoStoriesFound(e?: SlackEvent, ids?: number[]): void;
+  onBeforeStoriesPosted(update: Partial<SlackEvent>): void;
 }
 
 export class Client implements IClientEvents {
-  public onBotMessage: (e?: SlackEvent) => void;
-  public onNoIdsFound: (e?: SlackEvent, ids?: string[]) => void;
-  public onNoStoriesFound: (e?: SlackEvent, ids?: string[]) => void;
-  public beforeStoriesPosted: (update: Partial<SlackEvent>) => void;
+  public onBotMessage: IClientEvents["onBotMessage"];
+  public onNoIdsFound: IClientEvents["onNoIdsFound"];
+  public onNoStoriesFound: IClientEvents["onNoStoriesFound"];
+  public onBeforeStoriesPosted: IClientEvents["onBeforeStoriesPosted"];
 
   protected readonly slackToken: string;
   protected readonly pivotalToken: string;
@@ -36,14 +36,8 @@ export class Client implements IClientEvents {
     onBotMessage = () => false,
     onNoIdsFound = () => false,
     onNoStoriesFound = () => false,
-    beforeStoriesPosted = () => false,
-  }: {
-    env?: ClientEnv;
-    onBotMessage?(e?: SlackEvent): void;
-    onNoIdsFound?(e?: SlackEvent, ids?: string[]): void;
-    onNoStoriesFound?(e?: SlackEvent, ids?: string[]): void;
-    beforeStoriesPosted?(update: Partial<SlackEvent>): void;
-  } = {}) {
+    onBeforeStoriesPosted = () => false,
+  }: { env?: ClientEnv } & Partial<IClientEvents> = {}) {
     this.slackToken = env.SLACK_API_TOKEN || "";
     this.pivotalToken = env.PIVOTAL_API_TOKEN || "";
     if (!this.slackToken || !this.pivotalToken) {
@@ -62,7 +56,7 @@ export class Client implements IClientEvents {
     this.onBotMessage = onBotMessage;
     this.onNoIdsFound = onNoIdsFound;
     this.onNoStoriesFound = onNoStoriesFound;
-    this.beforeStoriesPosted = beforeStoriesPosted;
+    this.onBeforeStoriesPosted = onBeforeStoriesPosted;
   }
 
   public start() {
@@ -105,7 +99,7 @@ export class Client implements IClientEvents {
     return this.postStoriesToSlack({ channel: event.channel, ts: loadingMsg.ts }, stories);
   };
 
-  protected async fetchPivotalStories(ids: string[]): Promise<PivotalStory[]> {
+  protected async fetchPivotalStories(ids: number[]): Promise<PivotalStory[]> {
     const requests = ids.map((id) =>
       this.axios
         .get<PivotalStory>(`https://www.pivotaltracker.com/services/v5/stories/${id}`)
@@ -122,7 +116,7 @@ export class Client implements IClientEvents {
       text: "",
       ...options,
     };
-    this.beforeStoriesPosted(update);
+    this.onBeforeStoriesPosted(update);
     return this.web.chat.update(update);
   }
 }

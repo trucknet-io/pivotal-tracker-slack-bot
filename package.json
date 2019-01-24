@@ -1,6 +1,6 @@
 {
   "name": "pivotal-tracker-slack-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Slack bot for Pivotal Tracker integration",
   "main": "index.js",
   "engines": {
